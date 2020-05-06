@@ -18,16 +18,25 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class MainActivity extends AppCompatActivity {
+    private static String DATA_KEY = "data";
+
     private EditText editText;
     private Button submitButton;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
-    private ArrayList<TodoItem> data = new ArrayList<>();
+    private ArrayList<TodoItem> data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (savedInstanceState != null && savedInstanceState.getParcelableArrayList(DATA_KEY) != null) {
+            data = savedInstanceState.getParcelableArrayList(DATA_KEY);
+        } else {
+            data = new ArrayList<>();
+        }
+
         editText = findViewById(R.id.edit_text);
         submitButton = findViewById(R.id.submit_button);
         recyclerView = findViewById(R.id.recycler_view);
@@ -36,6 +45,13 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         submitButton.setOnClickListener(view -> onSubmitButtonClicked());
     }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(DATA_KEY, data);
+    }
+
 
     private void onTodoItemClicked(int position, TodoItem todoItem) {
         if (todoItem.isDone()) {
