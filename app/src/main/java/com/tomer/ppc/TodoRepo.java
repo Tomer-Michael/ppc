@@ -33,27 +33,35 @@ public class TodoRepo {
         return list.size();
     }
 
-    public List<TodoItem> deleteItem(int position) {
-        Log.d("TAMAR DELETING", "pos " + position);
-        Log.d("TAMAR DELETING", list.toString());
-        TodoItem removed = list.remove(position);
-        firestore.collection("ppc").document(removed.getId()).delete();
+    public List<TodoItem> deleteItem(TodoItem item) {
+        firestore.collection("ppc").document(item.getId()).delete();
+        list.remove(find(item));
         return list;
     }
 
-    public List<TodoItem> addTodo(TodoItem todo) {
-        Log.d("TAMAR", "addTodo with " + todo.getId());
+    public int find(TodoItem item) {
+        for(int i = 0; i < list.size(); i++) {
+            if(list.get(i).getId().equals(item.getId())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public List<TodoItem> addTodo(String text) {
         // New document
         DocumentReference doc = firestore.collection("ppc").document();
-        doc.set(todo);
-        list.add(todo);
+        String id = doc.getId();
+        TodoItem todoItem = new TodoItem(id, text);
+        doc.set(todoItem);
+        list.add(todoItem);
         return list;
     }
 
-    public List<TodoItem> editItem(int position, TodoItem newTodo) {
+    public List<TodoItem> editItem(TodoItem item) {
         Log.d("TAMAR", "editItem");
-        firestore.collection("ppc").document(newTodo.getId()).set(newTodo);
-        list.set(position, newTodo);
+        firestore.collection("ppc").document(item.getId()).set(item);
+        list.set(find(item), item);
         return list;
     }
 

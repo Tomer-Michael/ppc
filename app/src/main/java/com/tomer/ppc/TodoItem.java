@@ -14,19 +14,18 @@ public class TodoItem implements Parcelable {
     private String editTimestamp;
 
     public TodoItem() {
-
     }
 
-    public TodoItem(String text, boolean isDone) {
+    public TodoItem(String id, String text, boolean isDone) {
         this.text = text;
         this.isDone = isDone;
+        this.id = id;
         creationTimestamp = getCurrentTime();
         editTimestamp = creationTimestamp;
-        id = creationTimestamp;
     }
 
-    public  TodoItem(String text) {
-        this(text, false);
+    public TodoItem(String id, String text) {
+        this(id, text, false);
     }
 
     protected TodoItem(Parcel in) {

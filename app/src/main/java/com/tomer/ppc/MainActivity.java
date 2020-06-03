@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements TodoRepo.Listener
     private MyAdapter adapter;
     private List<TodoItem> data = new ArrayList<>();
     private TodoRepo todoRepo;
-    private int inPreview = IN_PREVIEW_DEFAULT_VALUE;
+    private TodoItem inPreview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,11 +56,11 @@ public class MainActivity extends AppCompatActivity implements TodoRepo.Listener
             return;
         }
         todoItem.toggleIsDone();
-        updateItem(position, todoItem);
+        updateItem(todoItem);
     }
 
     private boolean onTodoItemLongClicked(int position, TodoItem todoItem) {
-        inPreview = position;
+        inPreview = todoItem;
         Intent intent = new Intent(MainActivity.this, PreviewActivity.class);
         intent.putExtra(TODO_ITEM_KEY, todoItem);
         startActivityForResult(intent, REQUEST_CODE_1);
@@ -78,11 +78,11 @@ public class MainActivity extends AppCompatActivity implements TodoRepo.Listener
             } else {
                 TodoItem updatedItem = dataIntent.getParcelableExtra(UPDATED_ITEM_KEY);
                 if (updatedItem != null) {
-                    updateItem(inPreview, updatedItem);
+                    updateItem(updatedItem);
                 }
             }
         }
-        inPreview = IN_PREVIEW_DEFAULT_VALUE;
+        inPreview = null;
     }
 
     private void onSubmitButtonClicked() {
@@ -92,22 +92,21 @@ public class MainActivity extends AppCompatActivity implements TodoRepo.Listener
             return;
         }
         editText.setText("");
-        TodoItem newItem = new TodoItem(userInput);
-        addItem(newItem);
+        addItem(userInput);
     }
 
-    private void addItem(TodoItem newItem) {
-        data = todoRepo.addTodo(newItem);
+    private void addItem(String text) {
+        data = todoRepo.addTodo(text);
         adapter.setData(data);
     }
 
-    private void updateItem(int position, TodoItem newItem) {
-        data = todoRepo.editItem(position, newItem);
+    private void updateItem(TodoItem item) {
+        data = todoRepo.editItem(item);
         adapter.setData(data);
     }
 
-    private void deleteItem(int position) {
-        data = todoRepo.deleteItem(position);
+    private void deleteItem(TodoItem item) {
+        data = todoRepo.deleteItem(item);
         adapter.setData(data);
     }
 
