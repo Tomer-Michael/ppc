@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1016396884849-e6clmvscv5m3i0oemdle9mefepe31k3q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tomer.ppc",
+            "certificate_hash": "b9367b675339e6af5d92686344fc9248fdb9bafe"
+          }
+        },
+        {
           "client_id": "1016396884849-i0u0u0i3eag1asembeu30hulq6c9m041.apps.googleusercontent.com",
           "client_type": 3
         }

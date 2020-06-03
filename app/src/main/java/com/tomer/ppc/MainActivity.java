@@ -1,5 +1,6 @@
 package com.tomer.ppc;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Intent;
@@ -18,7 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TodoRepo.Listener {
     public static final String TODO_ITEM_KEY = "todo_item_key";
     public static final String SHOULD_DELETE_KEY = "should_delete_key";
     public static final String UPDATED_ITEM_KEY = "updated_item_key";
@@ -38,7 +39,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         todoRepo = ((PpcApplication) getApplication()).getTodoRepo();
-        data = todoRepo.getAllItems();
+        todoRepo.setListener(this);
+        data = new ArrayList(todoRepo.getAllItems());
 
         editText = findViewById(R.id.edit_text);
         submitButton = findViewById(R.id.submit_button);
@@ -55,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         }
         todoItem.toggleIsDone();
         adapter.notifyDataSetChanged();
-        todoRepo.notifyDataSetChanged(data);
+        todoRepo.editItem(position, todoItem);
     }
 
     private boolean onTodoItemLongClicked(int position, TodoItem todoItem) {
@@ -96,20 +98,25 @@ public class MainActivity extends AppCompatActivity {
 
     private void addItem(TodoItem newItem) {
         data.add(newItem);
-        todoRepo.notifyDataSetChanged(data);
+        todoRepo.addTodo(newItem);
         adapter.notifyDataSetChanged();
     }
 
     private void updateItem(int position, TodoItem newItem) {
         data.set(position, newItem);
-        todoRepo.notifyDataSetChanged(data);
+        todoRepo.editItem(position, newItem);
         adapter.notifyDataSetChanged();
     }
 
     private void deleteItem(int position) {
-        data.remove(position);
-        todoRepo.notifyDataSetChanged(data);
+        TodoItem removed = data.remove(position);
+        todoRepo.deleteItem(position, removed);
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void notifyMe(List<TodoItem> list) {
+        this.data = list;
     }
 
     private class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {

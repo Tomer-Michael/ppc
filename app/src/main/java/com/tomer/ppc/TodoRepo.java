@@ -6,54 +6,93 @@ import java.util.List;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 public class TodoRepo {
-    private static final String KEY_ITEMS_COUNT = "items_count";
-    private static final String KEY_ALL_ITEMS = "all_items";
-    private final SharedPreferences sharedPreferences;
-    private final Gson gson;
+    public interface Listener {
+        public void notifyMe(List<TodoItem> list);
+    }
+
+    private List<TodoItem> list = new ArrayList<>();
+    private Listener listener;
 
     public TodoRepo(Context context) {
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        gson = new Gson();
+        init();
+    }
+
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
     public int getItemsCount() {
-        return sharedPreferences.getInt(KEY_ITEMS_COUNT, 0);
+        return list.size();
     }
 
     public List<TodoItem> getAllItems() {
-        String json = sharedPreferences.getString(KEY_ALL_ITEMS, null);
-        return json != null ? gson.fromJson(json, new TypeToken<ArrayList<TodoItem>>(){}.getType()) : new ArrayList<>();
-    }
-
-    public void addItem(TodoItem todoItem) {
-        int itemCount = getItemsCount();
-        List<TodoItem> allItems = getAllItems();
-        allItems.add(todoItem);
-        sharedPreferences.edit()
-                .putInt(KEY_ITEMS_COUNT, itemCount + 1)
-                .putString(KEY_ALL_ITEMS, gson.toJson(allItems))
-                .apply();
-    }
-
-    public void deleteItem(int index) {
-        int itemCount = getItemsCount();
-        List<TodoItem> allItems = getAllItems();
-        allItems.remove(index);
-        sharedPreferences.edit()
-                .putInt(KEY_ITEMS_COUNT, itemCount - 1)
-                .putString(KEY_ALL_ITEMS, gson.toJson(allItems))
-                .apply();
+        return list;
     }
 
     public void notifyDataSetChanged(List<TodoItem> newDataSet) {
-        sharedPreferences.edit()
-                .putInt(KEY_ITEMS_COUNT, newDataSet.size())
-                .putString(KEY_ALL_ITEMS, gson.toJson(newDataSet))
-                .apply();
+        list = newDataSet;
+    }
+
+    void deleteItem(int position, TodoItem todo){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("ppc").document(todo.getId()).delete();
+        list.remove(position);
+    }
+
+    void addTodo(TodoItem todo){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        // New document
+        DocumentReference doc = db.collection("ppc").document();
+        doc.set(todo);
+        list.add(todo);
+    }
+
+    void editItem(int position, TodoItem newTodo){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("ppc").document(newTodo.getId()).set(newTodo);
+        list.set(position, newTodo);
+    }
+
+    public TodoItem getTodo(String id){
+        return list.stream()
+                .filter(todoItem -> todoItem.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private void init() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference tdLstCollectionRef = db.collection("ppc");
+        tdLstCollectionRef.addSnapshotListener((queryDocumentSnapshots, e) -> {
+            if (e != null) {
+                Log.w("Firestore", "Listen failed.", e);
+                return;
+            }
+            if (queryDocumentSnapshots == null) {
+                Log.d("Firestore", "Current data: null");
+            } else {
+                list.clear();
+                queryDocumentSnapshots.forEach(doc -> list.add(doc.toObject(TodoItem.class)));
+            }
+        });
+
+        tdLstCollectionRef.get().addOnCompleteListener(task -> {
+            if (listener != null) {
+                listener.notifyMe(list);
+            }
+        });
+        tdLstCollectionRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
+            if (listener != null) {
+                listener.notifyMe(list);
+            }
+        });
     }
 }
