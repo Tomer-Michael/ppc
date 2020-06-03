@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements TodoRepo.Listener
     private Button submitButton;
     private RecyclerView recyclerView;
     private MyAdapter adapter;
-    private List<TodoItem> data;
+    private List<TodoItem> data = new ArrayList<>();
     private TodoRepo todoRepo;
     private int inPreview = IN_PREVIEW_DEFAULT_VALUE;
 
@@ -41,8 +41,6 @@ public class MainActivity extends AppCompatActivity implements TodoRepo.Listener
         setContentView(R.layout.activity_main);
         todoRepo = ((PpcApplication) getApplication()).getTodoRepo();
         todoRepo.setListener(this);
-        data = new ArrayList(todoRepo.getAllItems());
-        data.add(new TodoItem("be a king"));
 
         editText = findViewById(R.id.edit_text);
         submitButton = findViewById(R.id.submit_button);
@@ -76,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements TodoRepo.Listener
         if (requestCode == REQUEST_CODE_1 && resultCode == RESULT_OK) {
             boolean shouldDelete = dataIntent.getBooleanExtra(SHOULD_DELETE_KEY, false);
             if (shouldDelete) {
+                Log.d("TAMAR", "about to delete, my data is " + data.toString());
                 deleteItem(inPreview);
             } else {
                 TodoItem updatedItem = dataIntent.getParcelableExtra(UPDATED_ITEM_KEY);
@@ -118,7 +117,8 @@ public class MainActivity extends AppCompatActivity implements TodoRepo.Listener
 
     @Override
     public void notifyMe(List<TodoItem> list) {
-        return; //this.data = list;
+        this.data = list;
+        adapter.setData(data);
     }
 
     private class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {

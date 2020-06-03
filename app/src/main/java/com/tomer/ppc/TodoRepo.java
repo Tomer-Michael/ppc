@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.gson.Gson;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 public class TodoRepo {
     public interface Listener {
@@ -19,6 +17,7 @@ public class TodoRepo {
     }
 
     private List<TodoItem> list = new ArrayList<>();
+    public FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     private Listener listener;
 
     public TodoRepo(Context context) {
@@ -33,45 +32,28 @@ public class TodoRepo {
         return list.size();
     }
 
-    public List<TodoItem> getAllItems() {
-        return list;
+    void deleteItem(int position, TodoItem todo) {
+        Log.d("TAMAR DELETING", "pos and todo: " + position + " " + todo.toString());
+        Log.d("TAMAR DELETING", list.toString());
+        firestore.collection("ppc").document(todo.getId()).delete();
     }
 
-    public void notifyDataSetChanged(List<TodoItem> newDataSet) {
-        list = newDataSet;
-    }
-
-    void deleteItem(int position, TodoItem todo){
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("ppc").document(todo.getId()).delete();
-        list.remove(position);
-    }
-
-    void addTodo(TodoItem todo){
+    void addTodo(TodoItem todo) {
         Log.d("TAMAR", "addTodo with " + todo.getId());
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         // New document
-        DocumentReference doc = db.collection("ppc").document();
+        DocumentReference doc = firestore.collection("ppc").document();
         doc.set(todo);
         list.add(todo);
     }
 
-    void editItem(int position, TodoItem newTodo){
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("ppc").document(newTodo.getId()).set(newTodo);
+    void editItem(int position, TodoItem newTodo) {
+        Log.d("TAMAR", "editItem");
+        firestore.collection("ppc").document(newTodo.getId()).set(newTodo);
         list.set(position, newTodo);
     }
 
-    public TodoItem getTodo(String id){
-        return list.stream()
-                .filter(todoItem -> todoItem.getId().equals(id))
-                .findFirst()
-                .orElse(null);
-    }
-
     private void init() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference tdLstCollectionRef = db.collection("ppc");
+        CollectionReference tdLstCollectionRef = firestore.collection("ppc");
         tdLstCollectionRef.addSnapshotListener((queryDocumentSnapshots, e) -> {
             if (e != null) {
                 Log.w("Firestore", "Listen failed.", e);
@@ -81,17 +63,25 @@ public class TodoRepo {
                 Log.d("Firestore", "Current data: null");
             } else {
                 list.clear();
-                queryDocumentSnapshots.forEach(doc -> list.add(doc.toObject(TodoItem.class)));
+                Log.d("TAMAR", "got2 " + queryDocumentSnapshots.toString());
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    TodoItem todo = doc.toObject(TodoItem.class);
+                    Log.d("TAMAR", "got2 " + todo.getText());
+                    list.add(todo);
+                }
+                Log.d("TAMAR", "got list is " + list.toString());
             }
         });
 
         tdLstCollectionRef.get().addOnCompleteListener(task -> {
             if (listener != null) {
+                Log.d("TAMAR", "About to notify, list is " + list.toString());
                 listener.notifyMe(list);
             }
         });
         tdLstCollectionRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
             if (listener != null) {
+                Log.d("TAMAR", "About to notify, list is " + list.toString());
                 listener.notifyMe(list);
             }
         });

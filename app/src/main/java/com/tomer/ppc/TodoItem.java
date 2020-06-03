@@ -25,7 +25,7 @@ public class TodoItem implements Parcelable {
         id = creationTimestamp;
     }
 
-    public TodoItem(String text) {
+    public  TodoItem(String text) {
         this(text, false);
     }
 
