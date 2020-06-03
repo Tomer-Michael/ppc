@@ -14,7 +14,6 @@ import androidx.appcompat.app.AlertDialog;
 
 public class PreviewActivity extends Activity {
     private static final String KEY_TO_DELETE = "to_delete";
-
     private boolean toDelete;
     TodoItem todoItem;
     private TextView idTextView;
@@ -53,7 +52,7 @@ public class PreviewActivity extends Activity {
                 showDeleteDialog();
             });
         } else {
-            commitButton.setOnClickListener(view -> );
+            commitButton.setOnClickListener(view -> onSubmitButtonClicked());
         }
 
         toggleButton = findViewById(R.id.toggle_button);
@@ -78,16 +77,38 @@ public class PreviewActivity extends Activity {
         }
         editText.setText("");
         todoItem.setText(userInput);
+        returnUpdatedItem();
     }
 
     private void returnUpdatedItem() {
+        Intent intent = new Intent();
+        intent.putExtra(MainActivity.UPDATED_ITEM_KEY, todoItem);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
 
+    private void deleteItem() {
+        Intent intent = new Intent();
+        intent.putExtra(MainActivity.SHOULD_DELETE_KEY, true);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    private void returnUnchanged() {
+        Intent intent = new Intent();
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        returnUnchanged();
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(KEY_TO_DELETE, toDelete);
+        outState.putBoolean(KEY_TO_DELETE, toDelete);
     }
 
     private void showDeleteDialog() {
@@ -100,9 +121,4 @@ public class PreviewActivity extends Activity {
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
     }
-
-    private void deleteItem() {
-
-    }
-
 }
