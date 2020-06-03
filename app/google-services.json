@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1016396884849",
+    "firebase_url": "https://ppc-db-v2.firebaseio.com",
+    "project_id": "ppc-db-v2",
+    "storage_bucket": "ppc-db-v2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1016396884849:android:c28079e2f8c915cceb24d0",
+        "android_client_info": {
+          "package_name": "com.tomer.ppc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1016396884849-i0u0u0i3eag1asembeu30hulq6c9m041.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDy0hwFGoKVILi1LYQlDj5gLKD7nkXOtyY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1016396884849-i0u0u0i3eag1asembeu30hulq6c9m041.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

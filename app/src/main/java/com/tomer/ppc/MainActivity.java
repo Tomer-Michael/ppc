@@ -2,9 +2,9 @@ package com.tomer.ppc;
 
 import java.util.List;
 
+import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +14,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String KEY_TO_DELETE = "to_delete";
-    private static final int TO_DELETE_DEFAULT_VALUE = -1;
+    public static final String TODO_ITEM_KEY = "todo_item_key";
+    public static final String SHOULD_DELETE_KEY = "should_delete_key";
+    public static final String UPDATED_ITEM_KEY = "updated_item_key";
+    public static final int REQUEST_CODE_1 = 1;
+    private static final int IN_PREVIEW_DEFAULT_VALUE = -1;
 
     private EditText editText;
     private Button submitButton;
@@ -29,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter adapter;
     private List<TodoItem> data;
     private TodoRepo todoRepo;
-    private int toDelete = TO_DELETE_DEFAULT_VALUE;
+    private int inPreview = IN_PREVIEW_DEFAULT_VALUE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,30 +47,6 @@ public class MainActivity extends AppCompatActivity {
         adapter = new MyAdapter(data);
         recyclerView.setAdapter(adapter);
         submitButton.setOnClickListener(view -> onSubmitButtonClicked());
-
-        if (savedInstanceState != null) {
-            toDelete = savedInstanceState.getInt(KEY_TO_DELETE, TO_DELETE_DEFAULT_VALUE);
-            if (toDelete != TO_DELETE_DEFAULT_VALUE) {
-                showDeleteDialog(toDelete);
-            }
-        }
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(KEY_TO_DELETE, toDelete);
-    }
-
-    private void showDeleteDialog(int position) {
-        new AlertDialog.Builder(MainActivity.this)
-                .setTitle("Delete entry")
-                .setMessage("Are you sure you want to delete this entry?")
-                .setPositiveButton(android.R.string.yes, (dialog, which) -> deleteItem(position))
-                .setNegativeButton(android.R.string.no, null)
-                .setOnDismissListener(view -> toDelete = TO_DELETE_DEFAULT_VALUE)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
     }
 
     private void onTodoItemClicked(int position, TodoItem todoItem) {
@@ -76,9 +54,33 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         todoItem.toggleIsDone();
-        adapter.notifyItemChanged(position);
+        adapter.notifyDataSetChanged();
         todoRepo.notifyDataSetChanged(data);
-        Log.d("TAMAR", "after click: " + todoRepo.getItemsCount());
+    }
+
+    private boolean onTodoItemLongClicked(int position, TodoItem todoItem) {
+        inPreview = position;
+        Intent intent = new Intent(MainActivity.this, PreviewActivity.class);
+        intent.putExtra(TODO_ITEM_KEY, todoItem);
+        startActivityForResult(intent, REQUEST_CODE_1);
+        return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent dataIntent) {
+        super.onActivityResult(requestCode, resultCode, dataIntent);
+        if (requestCode == REQUEST_CODE_1 && resultCode == RESULT_OK) {
+            boolean shouldDelete = dataIntent.getBooleanExtra(SHOULD_DELETE_KEY, false);
+            if (shouldDelete) {
+                deleteItem(inPreview);
+            } else {
+                TodoItem updatedItem = dataIntent.getParcelableExtra(UPDATED_ITEM_KEY);
+                if (updatedItem != null) {
+                    updateItem(inPreview, updatedItem);
+                }
+            }
+        }
+        inPreview = IN_PREVIEW_DEFAULT_VALUE;
     }
 
     private void onSubmitButtonClicked() {
@@ -94,16 +96,20 @@ public class MainActivity extends AppCompatActivity {
 
     private void addItem(TodoItem newItem) {
         data.add(newItem);
-        todoRepo.addItem(newItem);
-        adapter.notifyItemInserted(data.size() - 1);
-        Log.d("TAMAR", "after add: " + todoRepo.getItemsCount());
+        todoRepo.notifyDataSetChanged(data);
+        adapter.notifyDataSetChanged();
+    }
+
+    private void updateItem(int position, TodoItem newItem) {
+        data.set(position, newItem);
+        todoRepo.notifyDataSetChanged(data);
+        adapter.notifyDataSetChanged();
     }
 
     private void deleteItem(int position) {
         data.remove(position);
-        todoRepo.deleteItem(position);
-        adapter.notifyItemRemoved(position);
-        Log.d("TAMAR", "after del: " + todoRepo.getItemsCount());
+        todoRepo.notifyDataSetChanged(data);
+        adapter.notifyDataSetChanged();
     }
 
     private class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
@@ -151,11 +157,7 @@ public class MainActivity extends AppCompatActivity {
                     textView.setPaintFlags(textView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
                 }
                 textView.setOnClickListener(view -> onTodoItemClicked(position, todoItem));
-                textView.setOnLongClickListener(view -> {
-                    toDelete = curPos;
-                    showDeleteDialog(toDelete);
-                    return true;
-                });
+                textView.setOnLongClickListener(view -> onTodoItemLongClicked(position, todoItem));
             }
 
             public int getCurPos() {
@@ -167,5 +169,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
 }

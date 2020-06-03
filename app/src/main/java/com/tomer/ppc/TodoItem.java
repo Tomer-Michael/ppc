@@ -4,12 +4,18 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class TodoItem implements Parcelable {
+    private final String id;
     private String text;
     private boolean isDone;
+    private final String creationTimestamp;
+    private String editTimestamp;
 
     public TodoItem(String text, boolean isDone) {
         this.text = text;
         this.isDone = isDone;
+        creationTimestamp = Long.toString(System.currentTimeMillis());
+        editTimestamp = creationTimestamp;
+        id = creationTimestamp;
     }
 
     public TodoItem(String text) {
@@ -17,28 +23,11 @@ public class TodoItem implements Parcelable {
     }
 
     protected TodoItem(Parcel in) {
+        id = in.readString();
         text = in.readString();
         isDone = in.readByte() != 0;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public boolean isDone() {
-        return isDone;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public void setIsDone(boolean isDone) {
-        this.isDone = isDone;
-    }
-
-    public void toggleIsDone() {
-        this.isDone = !this.isDone;
+        creationTimestamp = in.readString();
+        editTimestamp = in.readString();
     }
 
     public static final Creator<TodoItem> CREATOR = new Creator<TodoItem>() {
@@ -53,6 +42,44 @@ public class TodoItem implements Parcelable {
         }
     };
 
+    public String getText() {
+        return text;
+    }
+
+    public boolean isDone() {
+        return isDone;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+        setEditTimestamp(Long.toString(System.currentTimeMillis()));
+    }
+
+    public void setIsDone(boolean isDone) {
+        this.isDone = isDone;
+        setEditTimestamp(Long.toString(System.currentTimeMillis()));
+    }
+
+    public void setEditTimestamp(String editTimestamp) {
+        this.editTimestamp = editTimestamp;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getCreationTimestamp() {
+        return creationTimestamp;
+    }
+
+    public String getEditTimestamp() {
+        return editTimestamp;
+    }
+
+    public void toggleIsDone() {
+        setIsDone(!isDone());
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -60,7 +87,10 @@ public class TodoItem implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
         dest.writeString(text);
         dest.writeByte((byte) (isDone ? 1 : 0));
+        dest.writeString(creationTimestamp);
+        dest.writeString(editTimestamp);
     }
 }
