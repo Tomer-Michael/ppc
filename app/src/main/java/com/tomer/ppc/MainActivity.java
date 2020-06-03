@@ -6,6 +6,7 @@ import java.util.List;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements TodoRepo.Listener
     private EditText editText;
     private Button submitButton;
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
+    private MyAdapter adapter;
     private List<TodoItem> data;
     private TodoRepo todoRepo;
     private int inPreview = IN_PREVIEW_DEFAULT_VALUE;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements TodoRepo.Listener
         todoRepo = ((PpcApplication) getApplication()).getTodoRepo();
         todoRepo.setListener(this);
         data = new ArrayList(todoRepo.getAllItems());
+        data.add(new TodoItem("be a king"));
 
         editText = findViewById(R.id.edit_text);
         submitButton = findViewById(R.id.submit_button);
@@ -56,8 +58,8 @@ public class MainActivity extends AppCompatActivity implements TodoRepo.Listener
             return;
         }
         todoItem.toggleIsDone();
-        adapter.notifyDataSetChanged();
         todoRepo.editItem(position, todoItem);
+        adapter.setData(data);
     }
 
     private boolean onTodoItemLongClicked(int position, TodoItem todoItem) {
@@ -99,24 +101,24 @@ public class MainActivity extends AppCompatActivity implements TodoRepo.Listener
     private void addItem(TodoItem newItem) {
         data.add(newItem);
         todoRepo.addTodo(newItem);
-        adapter.notifyDataSetChanged();
+        adapter.setData(data);
     }
 
     private void updateItem(int position, TodoItem newItem) {
         data.set(position, newItem);
         todoRepo.editItem(position, newItem);
-        adapter.notifyDataSetChanged();
+        adapter.setData(data);
     }
 
     private void deleteItem(int position) {
         TodoItem removed = data.remove(position);
         todoRepo.deleteItem(position, removed);
-        adapter.notifyDataSetChanged();
+        adapter.setData(data);
     }
 
     @Override
     public void notifyMe(List<TodoItem> list) {
-        this.data = list;
+        return; //this.data = list;
     }
 
     private class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
@@ -124,6 +126,11 @@ public class MainActivity extends AppCompatActivity implements TodoRepo.Listener
 
         public MyAdapter(List<TodoItem> data) {
             this.data = data;
+        }
+
+        public void setData(List<TodoItem> data) {
+            this.data = data;
+            adapter.notifyDataSetChanged();
         }
 
         @NonNull

@@ -48,6 +48,7 @@ public class TodoRepo {
     }
 
     void addTodo(TodoItem todo){
+        Log.d("TAMAR", "addTodo with " + todo.getId());
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         // New document
         DocumentReference doc = db.collection("ppc").document();
