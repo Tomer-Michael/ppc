@@ -34,8 +34,8 @@ public class TodoRepo {
     }
 
     public List<TodoItem> deleteItem(TodoItem item) {
-        firestore.collection("ppc").document(item.getId()).delete();
         list.remove(find(item));
+        firestore.collection("ppc").document(item.getId()).delete();
         return list;
     }
 
@@ -53,25 +53,15 @@ public class TodoRepo {
         DocumentReference doc = firestore.collection("ppc").document();
         String id = doc.getId();
         TodoItem todoItem = new TodoItem(id, text);
-        doc.set(todoItem);
         list.add(todoItem);
+        doc.set(todoItem);
         return list;
     }
 
     public List<TodoItem> editItem(TodoItem item) {
-        Log.d("TAMAR", "editItem " + item.getId() + " is done? " + item.isDone());
-        String rest = "";
-        for (TodoItem tomer: list) {
-            rest += "item " + tomer.getId() + " is done? " + tomer.isDone() + "\n";
-        }
-        Log.d("TAMAR", "editItem the rest: " + rest);
-        firestore.collection("ppc").document(item.getId()).set(item);
+        Log.d("TAMAR", "editing " + item.getText());
         list.set(find(item), item);
-        Log.d("TAMAR editItem", "found at " + find(item));
-        for (TodoItem tomer: list) {
-            rest += "item " + tomer.getId() + " is done? " + tomer.isDone() + "\n";
-        }
-        Log.d("TAMAR", "editItem the rest: " + rest);
+        firestore.collection("ppc").document(item.getId()).set(item);
         return list;
     }
 

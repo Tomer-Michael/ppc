@@ -7,11 +7,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class TodoItem implements Parcelable {
-    private String id;
-    private String text;
-    private boolean isDone;
-    private String creationTimestamp;
-    private String editTimestamp;
+    public String id;
+    public String text;
+    public boolean isDone;
+    public String creationTimestamp;
+    public String editTimestamp;
 
     public TodoItem() {
     }
