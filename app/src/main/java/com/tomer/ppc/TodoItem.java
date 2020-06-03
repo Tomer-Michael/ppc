@@ -1,5 +1,8 @@
 package com.tomer.ppc;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -13,7 +16,7 @@ public class TodoItem implements Parcelable {
     public TodoItem(String text, boolean isDone) {
         this.text = text;
         this.isDone = isDone;
-        creationTimestamp = Long.toString(System.currentTimeMillis());
+        creationTimestamp = getCurrentTime();
         editTimestamp = creationTimestamp;
         id = creationTimestamp;
     }
@@ -52,12 +55,12 @@ public class TodoItem implements Parcelable {
 
     public void setText(String text) {
         this.text = text;
-        setEditTimestamp(Long.toString(System.currentTimeMillis()));
+        setEditTimestamp(getCurrentTime());
     }
 
     public void setIsDone(boolean isDone) {
         this.isDone = isDone;
-        setEditTimestamp(Long.toString(System.currentTimeMillis()));
+        setEditTimestamp(getCurrentTime());
     }
 
     public void setEditTimestamp(String editTimestamp) {
@@ -74,6 +77,12 @@ public class TodoItem implements Parcelable {
 
     public String getEditTimestamp() {
         return editTimestamp;
+    }
+
+    private String getCurrentTime() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        return dtf.format(now);
     }
 
     public void toggleIsDone() {

@@ -32,16 +32,16 @@ public class PreviewActivity extends Activity {
         todoItem = intent.getParcelableExtra(MainActivity.TODO_ITEM_KEY);
 
         idTextView = findViewById(R.id.todo_id_tv);
-        idTextView.setText(todoItem.getId());
+        idTextView.setText("ID: " + todoItem.getId());
 
         textTextView = findViewById(R.id.todo_text_tv);
-        textTextView.setText(todoItem.getText());
+        textTextView.setText("Content: " + todoItem.getText());
 
         creationTextView = findViewById(R.id.todo_creation_tv);
-        creationTextView.setText(todoItem.getCreationTimestamp());
+        creationTextView.setText("Creation timestamp: " + todoItem.getCreationTimestamp());
 
         editTimeTextView = findViewById(R.id.todo_edit_tv);
-        editTimeTextView.setText(todoItem.getEditTimestamp());
+        editTimeTextView.setText("Last Edit Timestamp (test me!): " + todoItem.getEditTimestamp());
 
         editText = findViewById(R.id.edit_text);
         commitButton = findViewById(R.id.commit_button);
