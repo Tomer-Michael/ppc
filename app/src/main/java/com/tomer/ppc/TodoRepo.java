@@ -19,9 +19,10 @@ public class TodoRepo {
     private List<TodoItem> list = new ArrayList<>();
     public FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     private Listener listener;
+    private CollectionReference tdLstCollectionRef;
 
     public TodoRepo(Context context) {
-        init();
+        tdLstCollectionRef = init();
     }
 
     public void setListener(Listener listener) {
@@ -32,27 +33,31 @@ public class TodoRepo {
         return list.size();
     }
 
-    void deleteItem(int position, TodoItem todo) {
-        Log.d("TAMAR DELETING", "pos and todo: " + position + " " + todo.toString());
+    public List<TodoItem> deleteItem(int position) {
+        Log.d("TAMAR DELETING", "pos " + position);
         Log.d("TAMAR DELETING", list.toString());
-        firestore.collection("ppc").document(todo.getId()).delete();
+        TodoItem removed = list.remove(position);
+        firestore.collection("ppc").document(removed.getId()).delete();
+        return list;
     }
 
-    void addTodo(TodoItem todo) {
+    public List<TodoItem> addTodo(TodoItem todo) {
         Log.d("TAMAR", "addTodo with " + todo.getId());
         // New document
         DocumentReference doc = firestore.collection("ppc").document();
         doc.set(todo);
         list.add(todo);
+        return list;
     }
 
-    void editItem(int position, TodoItem newTodo) {
+    public List<TodoItem> editItem(int position, TodoItem newTodo) {
         Log.d("TAMAR", "editItem");
         firestore.collection("ppc").document(newTodo.getId()).set(newTodo);
         list.set(position, newTodo);
+        return list;
     }
 
-    private void init() {
+    private CollectionReference init() {
         CollectionReference tdLstCollectionRef = firestore.collection("ppc");
         tdLstCollectionRef.addSnapshotListener((queryDocumentSnapshots, e) -> {
             if (e != null) {
@@ -85,5 +90,6 @@ public class TodoRepo {
                 listener.notifyMe(list);
             }
         });
+        return tdLstCollectionRef;
     }
 }

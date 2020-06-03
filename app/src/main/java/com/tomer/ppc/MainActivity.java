@@ -56,8 +56,7 @@ public class MainActivity extends AppCompatActivity implements TodoRepo.Listener
             return;
         }
         todoItem.toggleIsDone();
-        todoRepo.editItem(position, todoItem);
-        adapter.setData(data);
+        updateItem(position, todoItem);
     }
 
     private boolean onTodoItemLongClicked(int position, TodoItem todoItem) {
@@ -98,25 +97,23 @@ public class MainActivity extends AppCompatActivity implements TodoRepo.Listener
     }
 
     private void addItem(TodoItem newItem) {
-        data.add(newItem);
-        todoRepo.addTodo(newItem);
+        data = todoRepo.addTodo(newItem);
         adapter.setData(data);
     }
 
     private void updateItem(int position, TodoItem newItem) {
-        data.set(position, newItem);
-        todoRepo.editItem(position, newItem);
+        data = todoRepo.editItem(position, newItem);
         adapter.setData(data);
     }
 
     private void deleteItem(int position) {
-        TodoItem removed = data.remove(position);
-        todoRepo.deleteItem(position, removed);
+        data = todoRepo.deleteItem(position);
         adapter.setData(data);
     }
 
     @Override
     public void notifyMe(List<TodoItem> list) {
+        Log.d("TAMAR", "got notified");
         this.data = list;
         adapter.setData(data);
     }
