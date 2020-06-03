@@ -59,9 +59,19 @@ public class TodoRepo {
     }
 
     public List<TodoItem> editItem(TodoItem item) {
-        Log.d("TAMAR", "editItem");
+        Log.d("TAMAR", "editItem " + item.getId() + " is done? " + item.isDone());
+        String rest = "";
+        for (TodoItem tomer: list) {
+            rest += "item " + tomer.getId() + " is done? " + tomer.isDone() + "\n";
+        }
+        Log.d("TAMAR", "editItem the rest: " + rest);
         firestore.collection("ppc").document(item.getId()).set(item);
         list.set(find(item), item);
+        Log.d("TAMAR editItem", "found at " + find(item));
+        for (TodoItem tomer: list) {
+            rest += "item " + tomer.getId() + " is done? " + tomer.isDone() + "\n";
+        }
+        Log.d("TAMAR", "editItem the rest: " + rest);
         return list;
     }
 
