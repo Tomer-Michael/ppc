@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -11,8 +12,10 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import androidx.annotation.NonNull;
 
@@ -61,7 +64,11 @@ public class TodoRepo {
         TodoItem todoItem = new TodoItem(id, text);
         list.add(todoItem);
         Log.d("TAMAR", "GREAT ID " + id);
-        doc.set(todoItem)
+
+        doc.set(todoItem.describe())
+                .addOnSuccessListener(unused -> Log.d("TAMAR", "GREAT SUCCESS!"))
+                .addOnFailureListener(e -> Log.e("TAMAR", "GREAT FAIL!", e));
+        db.collection(COLLECTION).add(todoItem.describe())
                 .addOnSuccessListener(unused -> Log.d("TAMAR", "GREAT SUCCESS!"))
                 .addOnFailureListener(e -> Log.e("TAMAR", "GREAT FAIL!", e));
         return list;
@@ -70,11 +77,11 @@ public class TodoRepo {
     public List<TodoItem> editItem(TodoItem item) {
         Log.d("TAMAR", "editing " + item.getText());
         list.set(find(item), item);
-        db.collection(COLLECTION).document(item.getId()).set(item);
+        db.collection(COLLECTION).document(item.getId()).set(item.describe());
         return list;
     }
 
-    private CollectionReference init() {
+    private CollectionReference init2() {
         CollectionReference collectionReference = db.collection(COLLECTION);
         collectionReference.addSnapshotListener((queryDocumentSnapshots, e) -> {
             if (e != null) {
@@ -108,5 +115,22 @@ public class TodoRepo {
             }
         });
         return collectionReference;
+    }
+
+    public List<TodoItem> init()
+    {
+        list.clear();
+        db.collection(COLLECTION).get().addOnSuccessListener(queryDocumentSnapshots -> {
+            List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+            for (DocumentSnapshot document : documents) {
+                TodoItem task = new TodoItem(document);
+                list.add(task);
+            }
+            if (listener != null) {
+                Log.d("TAMAR", "About to notify, list is " + list.toString());
+                listener.notifyMe(list);
+            }
+        });
+        return list;
     }
 }

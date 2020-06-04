@@ -28,12 +28,11 @@ public class TodoItem implements Parcelable {
         editTimestamp = creationTimestamp;
     }
     public TodoItem(DocumentSnapshot document) {
-        this.content = (String) document.get("content");
-        this.id = (String) document.get("id");
-        this.creationTimeStamp = document.getDate("creation time");
-        this.editTimeStamp = document.getDate("last edit time");
-        this.doneTimeStamp = document.getDate("done time");
-        this.isDone = document.getBoolean("is done");
+        this.text = (String) document.get("text");;
+        this.isDone = document.getBoolean("isDone");;
+        this.id = (String) document.get("id");;
+        creationTimestamp = (String) document.get("creationTimestamp");;
+        editTimestamp = (String) document.get("editTimestamp");;
     }
 
     public TodoItem(String id, String text) {

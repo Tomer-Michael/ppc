@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "676323075337",
-    "firebase_url": "https://reem-b6edb.firebaseio.com",
-    "project_id": "reem-b6edb",
-    "storage_bucket": "reem-b6edb.appspot.com"
+    "project_number": "699737177775",
+    "firebase_url": "https://tomer-ca804.firebaseio.com",
+    "project_id": "tomer-ca804",
+    "storage_bucket": "tomer-ca804.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:676323075337:android:dfe284697b2506b4711fd8",
+        "mobilesdk_app_id": "1:699737177775:android:b7884a10671b002ffd5e5a",
         "android_client_info": {
           "package_name": "com.tomer.ppc"
         }
       },
       "oauth_client": [
         {
-          "client_id": "676323075337-h83neqnb38vmrusoefnubg9jmtu0omn9.apps.googleusercontent.com",
+          "client_id": "699737177775-ds9nouqsp648n2ecm7dqj49akuk11emq.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDMalmR9EAHA3ICmlXS2OyztWTA7DhUcvI"
+          "current_key": "AIzaSyABg3-d3F-AA4GcQSTW71mq7QUHdVEkKP8"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "676323075337-h83neqnb38vmrusoefnubg9jmtu0omn9.apps.googleusercontent.com",
+              "client_id": "699737177775-ds9nouqsp648n2ecm7dqj49akuk11emq.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
