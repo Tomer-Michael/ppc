@@ -122,9 +122,9 @@ public class TodoRepo {
         list.clear();
         db.collection(COLLECTION).get().addOnSuccessListener(queryDocumentSnapshots -> {
             List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
-            for (DocumentSnapshot document : documents) {
-                TodoItem task = new TodoItem(document);
-                list.add(task);
+            for (DocumentSnapshot doc : documents) {
+                TodoItem todo = doc.toObject(TodoItem.class);
+                list.add(todo);
             }
             if (listener != null) {
                 Log.d("TAMAR", "About to notify, list is " + list.toString());
