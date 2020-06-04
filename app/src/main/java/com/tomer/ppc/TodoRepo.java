@@ -6,6 +6,8 @@ import java.util.List;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -17,7 +19,8 @@ public class TodoRepo {
     }
 
     private List<TodoItem> list = new ArrayList<>();
-    public FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+    public FirebaseDatabase dat = FirebaseDatabase.getInstance();
+    DatabaseReference firestore = database.getReference("message");
     private Listener listener;
     private CollectionReference tdLstCollectionRef;
 

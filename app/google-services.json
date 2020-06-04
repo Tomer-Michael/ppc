@@ -1,42 +1,34 @@
 {
   "project_info": {
-    "project_number": "1016396884849",
-    "firebase_url": "https://ppc-db-v2.firebaseio.com",
-    "project_id": "ppc-db-v2",
-    "storage_bucket": "ppc-db-v2.appspot.com"
+    "project_number": "842422615112",
+    "firebase_url": "https://ppc2-8fa99.firebaseio.com",
+    "project_id": "ppc2-8fa99",
+    "storage_bucket": "ppc2-8fa99.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1016396884849:android:c28079e2f8c915cceb24d0",
+        "mobilesdk_app_id": "1:842422615112:android:09577402a0b5931f34ec7d",
         "android_client_info": {
           "package_name": "com.tomer.ppc"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1016396884849-e6clmvscv5m3i0oemdle9mefepe31k3q.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.tomer.ppc",
-            "certificate_hash": "b9367b675339e6af5d92686344fc9248fdb9bafe"
-          }
-        },
-        {
-          "client_id": "1016396884849-i0u0u0i3eag1asembeu30hulq6c9m041.apps.googleusercontent.com",
+          "client_id": "842422615112-m44528o8lkq9a0rjj2tqjrh0e4or4tkb.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDy0hwFGoKVILi1LYQlDj5gLKD7nkXOtyY"
+          "current_key": "AIzaSyA-6AziB6VK_yM7fxva3kKkZp0nUDweRiU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1016396884849-i0u0u0i3eag1asembeu30hulq6c9m041.apps.googleusercontent.com",
+              "client_id": "842422615112-m44528o8lkq9a0rjj2tqjrh0e4or4tkb.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
