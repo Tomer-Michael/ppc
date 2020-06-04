@@ -2,9 +2,13 @@ package com.tomer.ppc;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.google.firebase.firestore.DocumentSnapshot;
 
 public class TodoItem implements Parcelable {
     public String id;
@@ -22,6 +26,14 @@ public class TodoItem implements Parcelable {
         this.id = id;
         creationTimestamp = getCurrentTime();
         editTimestamp = creationTimestamp;
+    }
+    public TodoItem(DocumentSnapshot document) {
+        this.content = (String) document.get("content");
+        this.id = (String) document.get("id");
+        this.creationTimeStamp = document.getDate("creation time");
+        this.editTimeStamp = document.getDate("last edit time");
+        this.doneTimeStamp = document.getDate("done time");
+        this.isDone = document.getBoolean("is done");
     }
 
     public TodoItem(String id, String text) {
@@ -115,4 +127,15 @@ public class TodoItem implements Parcelable {
         dest.writeString(creationTimestamp);
         dest.writeString(editTimestamp);
     }
+
+    public Map<String, Object> describe() {
+        Map<String, Object> taskData = new HashMap<>();
+        taskData.put("id", id);
+        taskData.put("text", text);
+        taskData.put("isDone", isDone);
+        taskData.put("creationTimestamp", creationTimestamp);
+        taskData.put("editTimestamp", editTimestamp);
+        return taskData;
+    }
+
 }

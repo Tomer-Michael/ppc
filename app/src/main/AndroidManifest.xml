@@ -14,11 +14,9 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".PreviewActivity" android:label="@string/title_activity_preview">
+            android:name=".PreviewActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity">
