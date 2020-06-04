@@ -68,9 +68,9 @@ public class TodoRepo {
         doc.set(todoItem.describe())
                 .addOnSuccessListener(unused -> Log.d("TAMAR", "GREAT SUCCESS!"))
                 .addOnFailureListener(e -> Log.e("TAMAR", "GREAT FAIL!", e));
-        db.collection(COLLECTION).add(todoItem.describe())
-                .addOnSuccessListener(unused -> Log.d("TAMAR", "GREAT SUCCESS!"))
-                .addOnFailureListener(e -> Log.e("TAMAR", "GREAT FAIL!", e));
+//        db.collection(COLLECTION).add(todoItem.describe())
+//                .addOnSuccessListener(unused -> Log.d("TAMAR", "GREAT SUCCESS!"))
+//                .addOnFailureListener(e -> Log.e("TAMAR", "GREAT FAIL!", e));
         return list;
     }
 
